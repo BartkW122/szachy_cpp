@@ -1,103 +1,125 @@
 #include <iostream>
 #include <string>
+#include <map>
 using namespace std;
-class szachy {
-public:
-	int info() {
-		cout<<"b-bialy";
-		cout<<endl;
-		cout<<"c-czarny";
-		cout<<endl;
-		cout<<":-pion";
-		cout<<endl;
-		cout<<"|-wieza";
-		cout<<endl;
-		cout<<"*.-goniec";
-		cout<<endl;
-		cout<<"*|-kon";
-		cout<<endl;
-		cout<<endl;
-		cout<<"-*-krolowa";
-		cout<<endl;
-		cout<<"*_-krol";
-		cout<<endl;
-		return 0;
-	};
-	int plansza(int x1,int y1,int x2,int y2,string pio) {
-		x1--;
-		y1--;
-		x2--;
-		y2--;
-		cout<<endl;
-		int w=8,k=8;
-		string **tab=new string*[w];
-		for(int i = 0; i<w; i++) {
-			tab[i]=new string[k];
-		}
+class ruch;
+class plansza;
+class szachy;
 
-		for(int i = 0; i<w; i++) {
-			for(int j = 0; j<k; j++) {
-				tab[i][j]="|_|";
-				tab[1][j]="|b:|";
- 
-				tab[0][0]="|b||";
-				tab[0][7]="|b||";
-                tab[0][1]="|b*||";
-				tab[0][6]="|b*||";
-				tab[0][2]="|b*.|";
-				tab[0][5]="|b*.|";
-                tab[0][3]="|b-*|";
-				tab[0][4]="|b*_|";
- 
-				tab[6][j]="|c:|";
-				tab[i][j]="|_|";
- 
-				tab[7][0]="|c||";
-				tab[7][7]="|c||";
-                tab[7][1]="|c*||";
-				tab[7][6]="|c*||";
-				tab[7][2]="|c*.|";
-				tab[7][5]="|c*.|";
-                tab[7][4]="|c-*|";
-				tab[7][3]="|c*_|";
-			}
-		}
-		for(int i = 0; i<w; i++) {
-			cout<<i+1;
-			for(int j = 0; j<k; j++) {
-			    if(tab[x1][y1]==pio){
-			        cout<<"indeks i: "<<i;
-			        tab[x1][y1]=tab[x2][y2];
-			    }
-				//tab[x2][y2]="|r|";
-				cout<<tab[i][j]<<" ";
-			}
-			cout<<"\n";
-		}
- 
-		return 0;
-	}
-	int gra() {
-	    info();
-		int x1,y1,x2,y2;
-		string pio;
-		cout<<"podaj pionek (pionek zapisz w ||):";
-		cin>>pio;
-		cout<<"podaj wspolzedne pionka (x) numer od 1 do 8 :";
-		cin>>x1;
-		cout<<"podaj wspolzedne pionka (y) numer od 1 do 8 :";
-		cin>>y1;
-		cout<<"podaj numer od 1 do 8 (x):";
-		cin>>x2;
-		cout<<"podaj numer od 1 do 8 (y):";
-		cin>>y2;
-		plansza(x1,y1,x2,y2,pio);
-		return 0;
-	};
+class gra{
+    public:
+    map <string, string> info = { {"Czarne", "c"}, {"Biale", "b"}, {"Pionek", ":"}, {"Wieza", "|"}, {"Skoczek", "*:"}, {"Goniec", "*."},{"Krolowa", "-*"},{"Krol", "*_"} };
+    int pozycja_x,pozycja_y;
+    string pole_do_gry[8][8];
+    
+    friend class plansza;
+    friend class ruch;
+    friend class szachy;
+    
+    friend void wyswietl_informacje(gra &);
+    friend void wyswietl_plansze(gra &);
+    friend void zrob_ruch(gra &,plansza &,ruch &);
+    
+    friend void Szachy_gra(gra &,plansza &,ruch &);
+    
+};
+
+class plansza{
+    public:
+    void wyswietl_informacje(gra GRA){
+        for (auto informacja : GRA.info) {
+            cout << informacja.first << " : " << informacja.second << "\n";
+        }    
+    }
+    
+    void wyswietl_plansze(gra GRA){
+        cout<<endl;
+        //przypisawnie pionkow do miejsc na planszy
+        for(int i = 0;i<8;i++){
+            for(int j = 0;j<8;j++){
+                GRA.pole_do_gry[i][j]="|__|";
+                
+                GRA.pole_do_gry[1][j]="|b:|";
+                GRA.pole_do_gry[0][0]="|b||";
+                GRA.pole_do_gry[0][7]="|b||";
+                GRA.pole_do_gry[0][1]="|b*:|";
+				GRA.pole_do_gry[0][6]="|b*:|";
+				GRA.pole_do_gry[0][2]="|b*.|";
+				GRA.pole_do_gry[0][5]="|b*.|";
+                GRA.pole_do_gry[0][3]="|b-*|";
+				GRA.pole_do_gry[0][4]="|b*_|";
+                
+                GRA.pole_do_gry[6][j]="|c:|";
+                GRA.pole_do_gry[7][0]="|c||";
+                GRA.pole_do_gry[7][7]="|c||";
+                GRA.pole_do_gry[7][1]="|c*:|";
+				GRA.pole_do_gry[7][6]="|c*:|";
+				GRA.pole_do_gry[7][2]="|c*.|";
+				GRA.pole_do_gry[7][5]="|c*.|";
+                GRA.pole_do_gry[7][4]="|c-*|";
+				GRA.pole_do_gry[7][3]="|c*_|";
+               
+            }
+        }
+        
+         for(int i = 0;i<8;i++){
+            cout<<i;
+            for(int j = 0;j<8;j++){
+                cout<<GRA.pole_do_gry[i][j];
+            }
+            cout<<endl;
+        }
+        for(int i = 0;i<8;i++){
+            cout<<"   "<<i;
+        }
+    }
+};
+class ruch{
+    public:
+    string znak;
+    void zrob_ruch(gra GRA,plansza PLANSZA, ruch RUCH){
+        cout<<endl;
+        string znak;
+        cout<<"podaj pozycje x :";cin>>GRA.pozycja_x;
+        cout<<"podaj pozycje y :";cin>>GRA.pozycja_y;
+        cout<<"podaj znak :";cin>>znak;
+        
+        //cout<<"\nx:"<<GRA.pozycja_x;
+        //cout<<"\ny:"<<GRA.pozycja_y;
+        cout<<"\nznak:"<<RUCH.znak;
+        
+        GRA.pole_do_gry[GRA.pozycja_x][GRA.pozycja_y]=znak;
+        PLANSZA.wyswietl_plansze(GRA);
+    }
+};
+class szachy{
+    public:
+    void Szachy_gra(gra GRA,plansza PLANSZA,ruch RUCH){
+        char z;
+        do{
+            PLANSZA.wyswietl_informacje(GRA);
+            PLANSZA.wyswietl_plansze(GRA);
+            RUCH.zrob_ruch(GRA,PLANSZA,RUCH);
+            cout<<"\nx:"<<GRA.pozycja_x;
+            cout<<"\ny:"<<GRA.pozycja_y;
+            cout<<"\nczy chcesz kontynuowac :";cin>>z;
+        }while(z=='y');
+    }
 };
 int main()
 {
-	szachy szachy;
-	szachy.gra();
-	return 0;
+    szachy SZACHY;
+    gra GRA;
+    plansza PLANSZA;
+    ruch RUCH;
+    
+    /*PLANSZA.wyswietl_informacje(GRA);
+    
+    PLANSZA.wyswietl_plansze(GRA);
+    
+    RUCH.zrob_ruch(GRA,PLANSZA,RUCH);*/
+    
+    SZACHY.Szachy_gra(GRA,PLANSZA,RUCH);
+
+    return 0;
 }
