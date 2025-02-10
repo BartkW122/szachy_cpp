@@ -32,12 +32,16 @@ class plansza{
         }    
     }
     
-    void wyswietl_plansze(gra GRA){
+    void wyswietl_plansze(gra GRA,int x,int y,string z){
         cout<<endl;
         //przypisawnie pionkow do miejsc na planszy
         for(int i = 0;i<8;i++){
             for(int j = 0;j<8;j++){
                 GRA.pole_do_gry[i][j]="|__|";
+                if(x==i && y==j){
+                    GRA.pole_do_gry[i][j]=z;
+                }
+                //GRA.pole_do_gry[x][y]=z;
                 
                 GRA.pole_do_gry[1][j]="|b:|";
                 GRA.pole_do_gry[0][0]="|b||";
@@ -74,31 +78,33 @@ class plansza{
         }
     }
 };
-class ruch{
-    public:
+class ruch {
+public:
     string znak;
-    void zrob_ruch(gra GRA,plansza PLANSZA, ruch RUCH){
-        cout<<endl;
-        string znak;
-        cout<<"podaj pozycje x :";cin>>GRA.pozycja_x;
-        cout<<"podaj pozycje y :";cin>>GRA.pozycja_y;
-        cout<<"podaj znak :";cin>>znak;
-        
-        //cout<<"\nx:"<<GRA.pozycja_x;
-        //cout<<"\ny:"<<GRA.pozycja_y;
-        cout<<"\nznak:"<<RUCH.znak;
-        
-        GRA.pole_do_gry[GRA.pozycja_x][GRA.pozycja_y]=znak;
-        PLANSZA.wyswietl_plansze(GRA);
+    void zrob_ruch(gra &GRA, plansza &PLANSZA, ruch &RUCH) {
+        cout << endl;
+        cout << "podaj pozycje x :"; cin >> GRA.pozycja_x;
+        cout << "podaj pozycje y :"; cin >> GRA.pozycja_y;
+        cout << "podaj znak :"; cin >> RUCH.znak;
+
+       
+        if(GRA.pozycja_x >= 0 && GRA.pozycja_x < 8 && GRA.pozycja_y >= 0 && GRA.pozycja_y < 8) {
+            RUCH.znak="|_"+RUCH.znak+"_|";
+        } else {
+            cout << "Nie można wstwaić znaku!" << endl;
+        }
+
+        PLANSZA.wyswietl_plansze(GRA,GRA.pozycja_x,GRA.pozycja_y,znak);
     }
 };
+
 class szachy{
     public:
     void Szachy_gra(gra GRA,plansza PLANSZA,ruch RUCH){
         char z;
         do{
             PLANSZA.wyswietl_informacje(GRA);
-            PLANSZA.wyswietl_plansze(GRA);
+            PLANSZA.wyswietl_plansze(GRA,GRA.pozycja_x,GRA.pozycja_y,RUCH.znak);
             RUCH.zrob_ruch(GRA,PLANSZA,RUCH);
             cout<<"\nx:"<<GRA.pozycja_x;
             cout<<"\ny:"<<GRA.pozycja_y;
